@@ -1,0 +1,58 @@
+--- 
+  - hosts: localhost 
+    name: Setup for a Generic AMI (mostly steps from opscommon) 
+    sudo: True 
+    tasks: 
+      - name: Install Base Software for all instances 
+        yum: pkg={{item}} state=present 
+        with_items: 
+          - patch 
+          - mlocate 
+          - emacs 
+          - gcc 
+          - cpan 
+          - git 
+          - cpanminus
+
+      - name: Install Perl Libraries 
+        cpanm: name={{item}} 
+        with_items: 
+          - Sys::Syslog 
+          - Digest::SHA 
+          - AWS::CLIWrapper 
+          - LWP 
+          - URI::Escape 
+          - Try::Tiny 
+          - DateTime 
+          - Switch 
+          - Archive::Extract 
+          - Archive::Zip 
+          - Text::CSV 
+          - Locale::Currency::Format 
+          - Number::Format
+
+      # - name: Copy default startup file for emacs
+      #   copy:
+      #     src=files/site-start.el
+      #     dest=/usr/share/emacs/site-lisp/site-start.el
+      #     backup=yes
+      #     force=yes
+      #
+      # - name: Copy shutdown script into place
+      #   copy:
+      #     src=files/a-local-shutdown
+      #     dest=/etc/init.d/a-local-shutdown
+      #     backup=yes
+      #     force=yes
+      - name: Install awsapitools 
+        yum: pkg=aws-apitools-mon state=present
+
+      # - name: Stop NTP
+      #   service:
+      #     name=ntp
+      #     state=stopped
+
+      # - name: Stop httpd
+      #   service:
+      #     name=httpd
+      #     state=stopped
